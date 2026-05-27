@@ -34,6 +34,11 @@ jobs:
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
+        env:
+          # Default plugin marketplace clone timeout is 120s; the
+          # anthropics/claude-code repo can exceed that under load. Raise
+          # to 5 minutes to reduce flakes.
+          CLAUDE_CODE_PLUGIN_GIT_TIMEOUT_MS: 300000
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
