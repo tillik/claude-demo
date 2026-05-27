@@ -56,6 +56,9 @@ check "hello.py lacks empty-list guard in average()" \
 check "claude.yml restricts @claude trigger by author_association" \
   "grep -q 'author_association' .github/workflows/claude.yml"
 
+check "pytest CI workflow present" \
+  "[ -f .github/workflows/test.yml ]"
+
 echo ""
 echo "==> $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

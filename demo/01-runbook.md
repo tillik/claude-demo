@@ -73,7 +73,7 @@ gh issue create -R tillik/claude-demo \
 
 ## Scenario 2 — Auto-review on a human PR
 
-**Goal:** show `claude-code-review.yml` reviewing a normal developer PR (no `@claude` mention needed).
+**Goal:** show `claude-code-review.yml` reviewing a normal developer PR (no `@claude` mention needed), and contrast it with hard test signal.
 
 ```bash
 git checkout -b break-add
@@ -84,8 +84,11 @@ gh pr create -R tillik/claude-demo --fill
 ```
 
 **What to watch:**
-1. PR opens, `Claude Code Review` workflow fires automatically.
-2. Within ~1 min, Claude posts a review comment on the PR pointing at the `add()` regression and the still-broken `average([])`.
+1. PR opens, **two** workflows fire automatically: `Tests` (pytest) and `Claude Code Review`.
+2. `Tests` goes red within ~30s — `test_add` fails because `2 * 3 != 5`. This is the **hard signal**.
+3. `Claude Code Review` may or may not comment. Honest reality: on subtle semantic bugs like operator swaps, Claude often has nothing to say from the diff alone (`-` and `*` are both valid arithmetic; without test context Claude can't infer the bug). This is a **soft signal**.
+
+**Teaching moment:** AI review is supplementary to tests, not a replacement. The diff was small, both operators are syntactically valid, and the only way to know `*` is wrong is to know `add` must produce `5`. Tests encode that knowledge; the diff doesn't.
 
 **Cleanup:** the PR will be closed by the next `reset.sh`.
 

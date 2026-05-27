@@ -39,6 +39,9 @@ jobs:
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
           plugins: 'code-review@claude-code-plugins'
           prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          # Surface Claude's reasoning in the workflow log so silent reviews
+          # (no inline comments) can still be debugged.
+          show_full_output: true
           # Allow PRs opened by the @claude bot itself to be reviewed.
           # Use '*' to allow any bot, or list bot logins explicitly.
           allowed_bots: 'claude'

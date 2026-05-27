@@ -16,11 +16,13 @@ What to say at each step. Keep it punchy.
   - Ruleset on `main` makes direct push impossible regardless of what the bot tries.
 - Principle: **control plane, not policy memo.**
 
-## Scenario 2 — auto-review
+## Scenario 2 — auto-review (and its limits)
 
-- No `@claude` mention required — this fires on every PR.
-- Useful for catching obvious regressions before a human reviewer looks.
-- It's a complement to, not a replacement for, human review.
+- Two workflows fire: `Tests` (pytest) and `Claude Code Review`.
+- **Pytest catches the bug; Claude often doesn't.** This is the honest finding worth surfacing live.
+- Why: the diff is `return a - b` → `return a * b`. Both operators are syntactically valid arithmetic. The only signal that `*` is wrong is the function name `add` plus the test contract `add(2,3) == 5`. Claude reading the diff alone has the name but not the contract.
+- **Lesson:** AI code review is a *soft* signal — useful for style, security, obvious anti-patterns. Tests are the *hard* signal for semantic correctness. Treat them as complementary layers, never substitutes.
+- This mirrors the "control plane, not policy memo" principle that runs through the whole demo: prompts and reviews are soft preferences, tests and rulesets are guarantees.
 
 ## Scenario 3 — `allowed_bots`
 
