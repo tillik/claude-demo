@@ -3,10 +3,12 @@ def greet(name):
 
 
 def add(a, b):
-    return a - b
+    return a + b
 
 
 def average(numbers):
+    if not numbers:
+        return 0
     total = 0
     for n in numbers:
         total += n
