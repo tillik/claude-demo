@@ -21,7 +21,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      # write required so the code-review plugin can post inline review
+      # comments via the GitHub API. With only `read`, Claude does the
+      # full analysis but POST calls are blocked by the action sandbox.
+      pull-requests: write
       issues: read
       id-token: write
 
