@@ -40,11 +40,15 @@ jobs:
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          # prompt: 'Update the pull request description to include a summary of changes.'
+          # Force PR-based workflow: never commit to main directly.
+          prompt: |
+            Follow the user's @claude instruction in the triggering comment or issue.
+            When making code changes, ALWAYS:
+              1. Create a new branch named claude/<short-topic>.
+              2. Commit changes to that branch only — never push to main.
+              3. Open a pull request targeting main with a clear title and body,
+                 then reply in the issue/PR thread with the PR link.
+            Do not modify main directly under any circumstances.
 
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr *)'
+          claude_args: '--allowed-tools Bash(git *),Bash(gh pr *),Bash(gh issue *)'
 
