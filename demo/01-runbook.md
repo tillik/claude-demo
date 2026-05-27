@@ -2,6 +2,27 @@
 
 Repeatable Claude Code + GitHub demo. Run `./demo/reset.sh` first, then walk through each scenario.
 
+## Visibility lifecycle (between demos)
+
+**Default state: private.** The repo only goes public when actively demoing — this eliminates the public `@claude` trigger surface as an attack vector when nobody's watching.
+
+**Arm (before demo):**
+```bash
+gh repo edit tillik/claude-demo --visibility public
+# Confirm ruleset enforcement resumed (was suspended while private on free tier):
+gh api repos/tillik/claude-demo/rulesets | jq '.[] | {name, enforcement}'
+# If the ruleset is missing or inactive, re-create it using the JSON in demo/00-setup.md.
+./demo/preflight.sh
+```
+
+**Disarm (after demo):**
+```bash
+gh repo edit tillik/claude-demo --visibility private
+```
+
+**What survives the toggle:** commits, workflows, the `CLAUDE_CODE_OAUTH_TOKEN` secret, the `claude` App installation, issues, PRs, collaborators.
+**What's affected:** rulesets are not *enforced* on a private repo (free tier) but the definition persists; Actions minutes start drawing from the 2000-min monthly quota while private.
+
 ## Preparation (~10 seconds)
 
 ```bash
