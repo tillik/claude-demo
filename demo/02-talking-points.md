@@ -16,13 +16,13 @@ What to say at each step. Keep it punchy.
   - Ruleset on `main` makes direct push impossible regardless of what the bot tries.
 - Principle: **control plane, not policy memo.**
 
-## Scenario 2 — auto-review (and its limits)
+## Scenario 2 — auto-review
 
 - Two workflows fire: `Tests` (pytest) and `Claude Code Review`.
-- **Pytest catches the bug; Claude often doesn't.** This is the honest finding worth surfacing live.
-- Why: the diff is `return a - b` → `return a * b`. Both operators are syntactically valid arithmetic. The only signal that `*` is wrong is the function name `add` plus the test contract `add(2,3) == 5`. Claude reading the diff alone has the name but not the contract.
-- **Lesson:** AI code review is a *soft* signal — useful for style, security, obvious anti-patterns. Tests are the *hard* signal for semantic correctness. Treat them as complementary layers, never substitutes.
-- This mirrors the "control plane, not policy memo" principle that runs through the whole demo: prompts and reviews are soft preferences, tests and rulesets are guarantees.
+- Both catch the multiplication bug. Pytest gives the binary signal; Claude posts a prose explanation.
+- **Productionization gotcha worth calling out:** the `/code-review` plugin needs `--comment` in the prompt to actually post findings. Without it, Claude runs the full analysis (token cost and all) and silently discards the output. A stock `/install-github-app` workflow doesn't include the flag — easy to miss until you wonder why the bot is quiet.
+- **Lesson:** AI review and tests are *defense in depth*, not substitutes. Tests catch the failure; Claude explains the why and points at the specific lines. Both signals are cheap relative to a missed bug in production.
+- Reinforces the recurring demo theme: prompts and config are soft preferences. The plugin flag is config; without it the soft layer is missing entirely.
 
 ## Scenario 3 — `allowed_bots`
 

@@ -59,6 +59,9 @@ check "claude.yml restricts @claude trigger by author_association" \
 check "pytest CI workflow present" \
   "[ -f .github/workflows/test.yml ]"
 
+check "code-review prompt includes --comment flag" \
+  "grep -q 'code-review --comment' .github/workflows/claude-code-review.yml"
+
 echo ""
 echo "==> $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]

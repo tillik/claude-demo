@@ -86,9 +86,11 @@ gh pr create -R tillik/claude-demo --fill
 **What to watch:**
 1. PR opens, **two** workflows fire automatically: `Tests` (pytest) and `Claude Code Review`.
 2. `Tests` goes red within ~30s — `test_add` fails because `2 * 3 != 5`. This is the **hard signal**.
-3. `Claude Code Review` may or may not comment. Honest reality: on subtle semantic bugs like operator swaps, Claude often has nothing to say from the diff alone (`-` and `*` are both valid arithmetic; without test context Claude can't infer the bug). This is a **soft signal**.
+3. `Claude Code Review` posts a comment within ~1–2 min identifying the multiplication bug. This is the **soft signal**.
 
-**Teaching moment:** AI review is supplementary to tests, not a replacement. The diff was small, both operators are syntactically valid, and the only way to know `*` is wrong is to know `add` must produce `5`. Tests encode that knowledge; the diff doesn't.
+**Teaching moment:** two complementary review layers. Pytest gives a fast binary verdict from the test contract; Claude gives a prose explanation of *why* the change is wrong and what was expected. Treat them as defense in depth, not redundancy.
+
+**Gotcha for productionizing:** the `/code-review` plugin only posts comments when invoked with `--comment`. Without that flag, Claude does the full multi-agent analysis but discards the output. Easy to miss in a stock install — verify your prompt includes it.
 
 **Cleanup:** the PR will be closed by the next `reset.sh`.
 
