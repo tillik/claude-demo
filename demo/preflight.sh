@@ -20,6 +20,12 @@ check() {
 
 echo "==> Pre-flight checks for $REPO"
 
+check "currently on 'main' branch" \
+  "[ \"\$(git rev-parse --abbrev-ref HEAD)\" = 'main' ]"
+
+check "working tree clean (no uncommitted changes)" \
+  "[ -z \"\$(git status --porcelain)\" ]"
+
 check "gh authenticated to github.com" \
   "gh auth status -h github.com"
 
