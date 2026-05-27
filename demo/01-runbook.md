@@ -78,6 +78,7 @@ gh issue create -R tillik/claude-demo \
 ```bash
 git checkout -b break-add
 sed -i 's/return a - b/return a * b/' hello.py
+python3 -m pytest
 git commit -am "Break add() differently"
 git push -u origin break-add
 gh pr create -R tillik/claude-demo --fill
