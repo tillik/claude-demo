@@ -1,6 +1,6 @@
 import pytest
 
-from hello import add, average, greet
+from hello import add, average, greet, shout
 
 
 def test_greet():
@@ -17,3 +17,11 @@ def test_average():
 
 def test_average_empty():
     assert average([]) == 0
+
+
+def test_shout():
+    assert shout("world") == "HELLO, WORLD"
+
+
+def test_shout_name():
+    assert shout("Alice") == "HELLO, ALICE"
