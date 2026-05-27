@@ -26,10 +26,37 @@ What to say at each step. Keep it punchy.
 
 ## Scenario 3 — `allowed_bots`
 
-- The action's bot guard exists for two reasons:
-  - Prevents bot-on-bot review loops (compute waste, credit burn).
-  - Reduces attack surface — a compromised bot account can't farm reviews to exfiltrate context.
-- Explicit allowlist (`'claude'`) beats `'*'` for production. Principle of least privilege.
+**What's being demonstrated:** a safety guard built into the `anthropics/claude-code-action`, and how to opt into bypassing it deliberately.
+
+**The default behavior:** when a PR is opened by *any* bot account (login ending in `[bot]`), the auto-review workflow refuses to run with `Workflow initiated by non-human actor`. The audience can see this exact error in the early test runs we hit before adding the allowlist.
+
+**Why the guard exists:**
+
+- **Loop prevention.** A bot-authored PR triggers the review, which posts a comment, which could re-trigger something else — ad infinitum. Compute and Claude credit waste.
+- **Attack-surface reduction.** A compromised or malicious bot (hijacked Dependabot, sketchy GitHub App someone installed) could otherwise farm reviews on crafted PRs — burning credits and potentially extracting context through prompt injection in the PR diff.
+
+**Why we explicitly opt in for `claude`:**
+
+Scenario 1 only works if the `@claude` bot's PR gets reviewed. Default-deny would defeat the whole pipeline. So we whitelist *only* the `claude` bot by name. Dependabot, Renovate, and any future installed bot stay blocked.
+
+**Teaching contrast — `'claude'` vs `'*'`:**
+
+You *could* write `allowed_bots: '*'` and let everything through. Fine for a demo. Wrong for production — it gives every present and future bot a free pass to your Claude quota. Least privilege says list bots by name.
+
+**Where this sits in the three-layer model:**
+
+| Layer | Question | Answer in this demo |
+|---|---|---|
+| Workflow prompt | What should the bot **do**? | "Open PRs, never push to main" |
+| **`allowed_bots` / `author_association`** | **Who can trigger the bot?** | **Only humans (S1 hardening) and our own bot (this scenario)** |
+| Ruleset (S4) | What's the **hard guarantee** if the above fail? | "Direct push to main is impossible" |
+
+Scenario 3's job is to make the audience understand that **identity matters as much as instructions** — opting in to bot reviewers is a deliberate, named decision, not a default.
+
+**How to show it on stage — pick one:**
+
+- *Angle A (faster):* point at any prior bot-authored PR (Scenario 1's output) and show the `Claude Code Review` check ran green. Explain that without `allowed_bots: 'claude'`, that check would have refused.
+- *Angle B (more memorable):* remove the `allowed_bots:` line, push, re-fire Scenario 1, show the red `non-human actor` error live, then restore. Adds ~3 minutes and a real failure moment.
 
 ## Scenario 4 — ruleset enforcement
 
