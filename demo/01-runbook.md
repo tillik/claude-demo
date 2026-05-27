@@ -34,6 +34,21 @@ The baseline:
 - `hello.py` has two bugs (`add` subtracts instead of adds; `average` crashes on empty list).
 - `main` is clean. No open issues or PRs. No `claude/*` branches.
 
+**Demonstrate the bugs live (good audience opener):**
+
+```bash
+python3 -m pytest -v
+```
+
+Expected output: `test_add` fails with `assert -1 == 5`, `test_average_empty` fails with `ZeroDivisionError`. Two of four tests red — this is the problem statement that `@claude` will fix in Scenario 1.
+
+Quick one-liner alternatives:
+
+```bash
+python3 -c "from hello import add; print('add(2,3) =', add(2,3), '(expected 5)')"
+python3 -c "from hello import average; print(average([]))"   # ZeroDivisionError
+```
+
 ---
 
 ## Scenario 1 — Interactive `@claude` fixes a bug
